@@ -2,62 +2,73 @@
 
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <title>CyberHex</title>
-        <link rel="stylesheet" href="{% static 'css/style.css' %}">
-        <header>
-            <div class="header-container">
-                <div class="logo-title-wrapper">
-                    <img src="{% static 'images/logo.png' %}" alt="CyberHex Logo" class="logo">
-                    <div class="text-container">
-                        <a href="{% url 'discussion_forum:forum_index' %}"> 
-                            <h1>CyberHex</h1>
-                        </a>
-                        <p>Information sharing haven for cyber security enthusiasts.</p>
-                    </div>
-                </div>
-                <nav class="auth-menu">
-                    <ul>
-                        <form id="form" role="search">
-                            <input type="search" id="query" name="q"
-                             placeholder="Search..."
-                             aria-label="Search through site content">
-                            <button>Search</button>
-                        </form>
-                        {% if user.is_authenticated %}
-                        <li><a href="{% url 'user_accounts:profile' user.id %}">My Profile</a></li>
-                        <li><a href="{% url 'user_accounts:logout' user.id %}">Logout</a></li>
-                        {% else %}
-                            <li><a href='/accounts/login'>Login</a></li>
-                            <li><a href='/accounts/register'>Register</a></li>
-                        {% endif %}
-                    </ul>
-                </nav>
-            </div>
-        </header>
-    </head>
-    <body>
-        <main>
-            <nav class="navbar">
-                <ul>
-                    <li><a href="{% url 'discussion_forum:forum_index' %}">Forum</a></li>
-                    <li><a href="#">Blog</a></li>
-                    <li><a href="#">News</a></li>
-                    <li><a href="#">Mission</a></li>
-                    <li><a href="#">CTF</a></li>
-                </ul>
-            </nav>
-            {% block content %}
-
-
-            {% endblock %}        
-        </main>
-        <footer>
-            <div class="footer-container">
-                <p>&copy; 2024 CyberHex. All rights reserved.</p>
-                <p>Contact us: <a href="mailto:info@cyberhex.com">info@cyberhex.com</a></p>
-            </div>
-        </footer>
-    </body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>CyberHex</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+  </head>
+  <body>
+    <header>
+      <div class="header-container">
+        <div class="logo-title-wrapper">
+          <img
+            src="{% static 'images/logo.png' %}"
+            alt="CyberHex Logo"
+            class="logo"
+          />
+          <div class="text-container">
+            <a href="{% url 'discussion_forum:forum_index' %}">
+              <h1>CyberHex</h1>
+            </a>
+            <p>Information sharing haven for cyber security enthusiasts.</p>
+          </div>
+        </div>
+        <nav class="auth-menu">
+          <ul>
+            <form id="form" role="search">
+              <input
+                type="search"
+                id="query"
+                name="q"
+                placeholder="Search..."
+                aria-label="Search through site content"
+              />
+              <button>Search</button>
+            </form>
+            {% if user.is_authenticated %}
+            <li>
+              <a href="{% url 'user_accounts:profile' user.username %}"
+                >My Profile</a
+              >
+            </li>
+            <li>
+              <a href="{% url 'user_accounts:logout' %}">Logout</a>
+            </li>
+            {% else %}
+            <li><a href="/accounts/login">Login</a></li>
+            <li><a href="/accounts/register">Register</a></li>
+            {% endif %}
+          </ul>
+        </nav>
+      </div>
+      <nav class="navbar">
+        <ul>
+          <li><a href="{% url 'discussion_forum:forum_index' %}">Forum</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">News</a></li>
+          <li><a href="#">Mission</a></li>
+          <li><a href="#">CTF</a></li>
+        </ul>
+      </nav>
+    </header>
+    {% block content %} {% endblock %}
+    <footer>
+      <div class="footer-container">
+        <p>&copy; 2024 CyberHex. All rights reserved.</p>
+        <p>
+          Contact us: <a href="mailto:info@cyberhex.com">info@cyberhex.com</a>
+        </p>
+      </div>
+    </footer>
+  </body>
 </html>

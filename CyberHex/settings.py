@@ -33,7 +33,9 @@ INSTALLED_APPS = [
     'notifications',
     'search',
     'moderation',
-]
+]      
+
+AUTH_USER_MODEL = 'user_accounts.User'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

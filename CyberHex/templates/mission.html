@@ -1,0 +1,95 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block content %}
+<main class="mission-container">
+   <div class="mission-card">
+      
+      <h1>CyberHex</h1>
+      <h2>Siber güvenlik dünyasına hoş geldiniz!</h2>
+      <h2>CyberHex, 31/12/2024 tarihinde Raptor tarafından temelleri atılmış ve 12/01/2025'te hayata geçmiş bir siber güvenlik forumudur.</h2>
+
+      <h1>Misyonumuz</h1>
+      <h2>CyberHex olarak, siber güvenlik alanında bilgi paylaşımını teşvik eden, etik hackerlar, güvenlik uzmanları ve meraklıları için güvenilir bir platform oluşturmayı amaçlıyoruz. Üyelerimize güncel tehditler, güvenlik açıkları ve savunma stratejileri hakkında bilgi sağlayarak dijital dünyayı daha güvenli hale getirmeye katkıda bulunuyoruz. Bilgiye erişimi kolaylaştıran, etik değerleri ön planda tutan ve sürekli öğrenmeyi teşvik eden bir topluluk inşa etmeyi hedefliyoruz.</h2>
+
+      <h1>Vizyonumuz</h1>
+      <h2>CyberHex, siber güvenlik alanında dünyanın önde gelen bilgi paylaşım platformlarından biri olmayı hedeflemektedir. Teknolojik gelişmelere ayak uyduran, sürekli yenilenen ve topluluk desteğiyle büyüyen bir ekosistem oluşturarak bireylerin ve kurumların dijital güvenliğini en üst seviyeye çıkarmalarına yardımcı olmayı amaçlıyoruz. Güvenilir, yenilikçi ve etik değerlere bağlı bir forum olarak, küresel çapta siber güvenlik bilincini artırmayı vizyon ediniyoruz.</h2>
+
+      <h1>CyberHex'da Neler Var?</h1>
+      <ul>
+         <li>Güncel siber güvenlik haberleri ve analizleri</li>
+         <li>Topluluk tarafından oluşturulan teknik içerikler ve tartışmalar</li>
+         <li>Etik hacking ve penetrasyon testlerine dair eğitimler</li>
+         <li>Güvenlik açıkları ve tehdit istihbaratı paylaşımları</li>
+         <li>Siber güvenlik uzmanları ve meraklıları ile networking fırsatları</li>
+         <li>Gelişen dijital tehditlere karşı bilgi edinme imkanı</li>
+      </ul>
+
+      <h2>Sen de CyberHex topluluğuna katıl, dijital güvenliğini en üst seviyeye çıkar!</h2>
+   </div>
+</main>
+
+<style>
+.mission-container {
+    display: flex;
+    justify-content: center;
+    padding: 3em 0;
+}
+
+.mission-card {
+    background-color: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    padding: 2.5em;
+    border-radius: 10px;
+    width: 50%;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    text-align: left;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.mission-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7);
+}
+
+.mission-card img {
+    width: 100%;
+    height: auto;
+    border-radius: 10px;
+    margin-bottom: 1.5em;
+    border: 3px solid #444;
+}
+
+.mission-card h1 {
+    color: #b40000;
+    font-size: 1.5em;
+    margin-bottom: 0.5em;
+}
+
+.mission-card h2 {
+    color: #ddd;
+    font-size: 1.1em;
+    line-height: 1.6;
+    margin-bottom: 1em;
+}
+
+.mission-card ul {
+    list-style-type: square;
+    padding-left: 20px;
+    margin-bottom: 1.5em;
+}
+
+.mission-card ul li {
+    color: #ddd;
+    font-size: 1.1em;
+    margin-bottom: 0.5em;
+}
+
+@media screen and (max-width: 768px) {
+    .mission-card {
+        width: 90%;
+        padding: 1.5em;
+    }
+}
+</style>
+
+{% endblock %}

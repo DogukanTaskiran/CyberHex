@@ -1,0 +1,100 @@
+{% extends 'layout.html' %}
+{% load static %}
+{% block content %}
+<main class="mission-container">
+   <div class="mission-card">
+      <h2>CyberHex Forum Kuralları ve Güvenlik Politikaları</h2>
+      
+      <h3>1. Saygı ve Profesyonellik</h3>
+      <p>CyberHex, bilgi paylaşımının sağlıklı bir şekilde gerçekleşmesini destekleyen bir platformdur. Forumda tüm üyeler birbirine saygılı ve yapıcı bir şekilde yaklaşmalıdır. Kişisel hakaretler, ayrımcı dil kullanımı ve toksik davranışlar kesinlikle yasaktır.</p>
+
+      <h3>2. Etik Siber Güvenlik Kurallarına Uyulmalıdır</h3>
+      <p>CyberHex, etik hackerlık ve bilgi güvenliği konularında farkındalık yaratmayı amaçlamaktadır. Bu yüzden, yasa dışı siber saldırıları teşvik etmek, izinsiz sızma testlerine dair paylaşımlar yapmak ve illegal hacking yöntemlerini tartışmak yasaktır.</p>
+
+      <h3>3. Yasalara Uygunluk</h3>
+      <p>Forumda Türkiye Cumhuriyeti yasalarına ve uluslararası siber güvenlik standartlarına aykırı içerik paylaşımı yasaktır. Dark Web, yasa dışı yazılımlar, zararlı kodlar, telif hakkı ihlalleri ve kişisel verilerin ifşası kesinlikle kabul edilmez.</p>
+
+      <h3>4. Kişisel Bilgileri ve Gizliliği Koruyun</h3>
+      <p>Forumda herhangi bir kullanıcının veya üçüncü bir şahsın kişisel bilgilerini paylaşmak yasaktır. IP adresleri, kimlik bilgileri, e-posta adresleri veya herhangi bir özel verinin izinsiz paylaşımı ciddi bir ihlal olarak değerlendirilir.</p>
+
+      <h3>5. Zararlı Yazılımlar ve Kötü Amaçlı Kodlar</h3>
+      <p>Virüsler, malware, trojan, RAT, keylogger gibi kötü amaçlı yazılımlar hakkında bilgilendirme yapılabilir ancak zararlı yazılım paylaşımı, dağıtımı veya kullanımına teşvik eden içerikler yasaktır.</p>
+
+      <h3>6. Siber Güvenlik Testleri ve Penetrasyon Testleri</h3>
+      <p>Forumda penetrasyon testi (pentest) ve sızma testleri hakkında yalnızca etik ve yasal çerçevede bilgi paylaşılabilir. İzinsiz sistem taramaları, yetkisiz erişimler ve hacking teşvikleri kesinlikle yasaktır.</p>
+
+      <h3>7. Sosyal Mühendislik ve Dolandırıcılık</h3>
+      <p>Phishing (oltalama), sosyal mühendislik saldırıları, sahte kimlik oluşturma, dolandırıcılık yöntemleri gibi konuların teşvik edilmesi ve yasa dışı amaçlar için kullanımı yasaktır.</p>
+
+      <h3>8. Reklam, Spam ve Dolandırıcılığa Karşı Önlemler</h3>
+      <p>Forumda spam, gereksiz link paylaşımı, yanıltıcı reklamlar ve kullanıcıları kandırmaya yönelik içeriklere izin verilmez. Güvenilmeyen linkler veya yönlendirmeler paylaşırken mutlaka kaynağı belirtilmelidir.</p>
+
+      <h3>9. Forum Moderasyonuna ve Kurallarına Saygı</h3>
+      <p>Moderatörler, forumun güvenliğini sağlamak ve topluluk kurallarını uygulamakla sorumludur. Moderatör kararlarına saygı gösterilmeli, herhangi bir ihlal durumunda şikayetler forum yönetimine iletilmelidir.</p>
+
+      <h3>10. Siber Güvenlik Bilinci ve Eğitimi</h3>
+      <p>CyberHex, üyelerine etik hackerlık, dijital güvenlik, veri koruma ve internet gizliliği gibi konularda bilinç kazandırmayı hedeflemektedir. Bu doğrultuda paylaşımlarınızı bilgi verici, yapıcı ve eğitici olacak şekilde yapmalısınız.</p>
+
+      <p>Kurallara uyulmaması durumunda kullanıcılar uyarılabilir, geçici veya kalıcı olarak forumdan uzaklaştırılabilir. Forumda etik, güvenlik ve sorumluluk bilincini koruyarak, hep birlikte daha güvenli bir internet ortamı oluşturabiliriz.</p>
+
+      <p>CyberHex topluluğuna hoş geldiniz, güvenli ve faydalı bir forum deneyimi dileriz!</p>
+   </div>
+</main>
+
+<style>
+.mission-container {
+    display: flex;
+    justify-content: center;
+    padding: 3em 0;
+}
+
+.mission-card {
+    background-color: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    padding: 2.5em;
+    border-radius: 10px;
+    width: 60%;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    text-align: left;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.mission-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.7);
+}
+
+.mission-card h2 {
+    color: #ffcc00;
+    font-size: 2em;
+    text-align: center;
+    margin-bottom: 1.5em;
+}
+
+.mission-card h3 {
+    color: #ffd700;
+    font-size: 1.4em;
+    margin-bottom: 0.5em;
+    font-weight: bold;
+}
+
+.mission-card p {
+    color: #ccc;
+    font-size: 1.1em;
+    line-height: 1.6;
+    margin-bottom: 1em;
+}
+
+.mission-card p:last-child {
+    margin-bottom: 0;
+}
+
+@media screen and (max-width: 768px) {
+    .mission-card {
+        width: 90%;
+        padding: 1.5em;
+    }
+}
+</style>
+
+{% endblock %}

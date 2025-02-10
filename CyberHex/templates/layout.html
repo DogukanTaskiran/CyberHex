@@ -1,0 +1,139 @@
+{% load static %}
+{% load humanize %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>CyberHex</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'images/logo2.png' %}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/translations/tr.js"></script>
+    <link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/35.0.1/classic/theme.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block extra_head %} {% endblock %}
+  </head>
+<body class="bg-wallpaper">
+    <header>
+      <div class="header-container">
+        <div class="logo-title-wrapper">
+          <a href="{% url 'discussion_forum:forum_index' %}">
+            <img
+              src="{% static 'images/logo3.png' %}"
+              alt="CyberHex Logo"
+              class="logo"
+            />
+          </a>
+          <div class="text-container">
+            <a href="{% url 'discussion_forum:forum_index' %}">
+              <h1>CyberHex</h1>
+            </a>
+            <p>Security 101</p>
+          </div>
+        </div>
+        <nav class="auth-menu">
+          <ul>
+            {% if user.is_authenticated %}
+              <li>
+                <a href="{% url 'notifications:notification_list' %}">
+                  Bildirimlerim
+                  {% if unread_count > 0 %}
+                    <span class="unread-badge">{{ unread_count }}</span>
+                  {% endif %}
+                </a>
+              </li>
+              <li>
+                <a href="{% url 'private_messages:inbox' %}">
+                    Mesajlarım
+                    {% if unread_messages_count > 0 %}
+                        <span class="unread-badge">{{ unread_messages_count }}</span>
+                    {% endif %}
+                </a>
+              </li>
+              <li><a href="{% url 'post_interactions:profile_posts' %}">Gönderilerim</a></li>
+              <li><a href="{% url 'user_accounts:profile' request.user.username %}">Profilim, {{request.user.username}}</a></li>
+              <li><a href="{% url 'user_accounts:logout' %}">Çıkış yap</a></li>
+            {% else %}
+              <li><a href="/accounts/login">Giriş yap</a></li>
+              <li><a href="/accounts/register">Üye ol</a></li>
+            {% endif %}
+          </ul>
+        </nav>
+        
+      </div>
+      <nav class="navbar">
+        <ul>
+          <li><a href="{% url 'discussion_forum:forum_index' %}">Anasayfa</a></li>
+          <li><a href="{% url 'contents'%}">İçerikler</a></li>
+          <li><a href="{% url 'mission'%}">Misyon ve Vizyon</a></li>
+          <li><a href="{% url 'rules'%}">Kurallar</a></li>
+        </ul>
+      </nav>
+    </header>
+    {% block content %} {% endblock %}
+    <footer>
+      <div class="footer-container">
+        <p>© 2024 CyberHex. Tüm hakları saklıdır.</p>
+        <p>
+          Bize ulaşın: <a href="mailto:dogukantaskiran1222@gmail.com">dogukantaskiran1222@gmail.com</a>
+        </p>
+      </div>
+    </footer>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+          const oembeds = document.querySelectorAll("oembed[url]");
+          oembeds.forEach(oembed => {
+              const iframe = document.createElement("iframe");
+              iframe.setAttribute("src", oembed.getAttribute("url").replace("watch?v=", "embed/"));
+              iframe.setAttribute("width", "560");
+              iframe.setAttribute("height", "315");
+              iframe.setAttribute("frameborder", "0");
+              iframe.setAttribute("allow", "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture");
+              iframe.setAttribute("allowfullscreen", true);
+              oembed.parentNode.replaceChild(iframe, oembed);
+          });
+      });
+
+      
+      let editors = {};
+      
+      function showEditForm(commentId) {
+          document.getElementById(`edit-form-${commentId}`).style.display = 'block';
+          
+          if (!editors[commentId]) {
+              ClassicEditor
+                  .create(document.querySelector(`#editor-${commentId}`))
+                  .then(editor => {
+                      editors[commentId] = editor;
+                  })
+                  .catch(error => {
+                      console.error(error);
+                  });
+          }
+      }
+      
+      function hideEditForm(commentId) {
+          document.getElementById(`edit-form-${commentId}`).style.display = 'none';
+      }
+      
+      function updateContent(commentId) {
+          if (editors[commentId]) {
+              const content = editors[commentId].getData();
+              document.getElementById(`content-${commentId}`).value = content;
+          }
+      }
+        
+    </script>
+    <style>
+        .unread-badge {
+          background-color: red;
+          color: white;
+          border-radius: 50%;
+          padding: 3px 8px;
+          font-size: 14px;
+          margin-left: 5px;
+        } 
+    </style>
+  </body>
+</html>

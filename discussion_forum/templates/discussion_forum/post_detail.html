@@ -1,0 +1,740 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block content %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const content = document.querySelector('.post-details-content');
+        if (content) {
+            const regex = /https:\/\/rumble\.com\/embed\/[^\s]+/g;
+            content.innerHTML = content.innerHTML.replace(regex, function(match) {
+                return `<iframe class="rumble" style="width: 100%; aspect-ratio: 16/9;" src="${match}" frameborder="0" allowfullscreen></iframe>`;
+            });
+        }
+    });
+    
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const fileInput = document.getElementById('media-upload');
+        const previewDiv = document.getElementById('media-preview');
+        
+        fileInput.addEventListener('change', function(e) {
+            const file = this.files[0];
+            if (!file) return;
+            
+            if (file.size > 5 * 1024 * 1024) {
+                alert('Dosya boyutu 5MB\'dan küçük olmalıdır');
+                this.value = '';  
+                previewDiv.innerHTML = '';  
+                return;
+            }
+            
+            previewDiv.innerHTML = `
+                <div class="file-info">
+                    <i class="fas fa-image"></i>
+                    <span class="file-name">${file.name}</span>
+                    <button type="button" class="remove-file">×</button>
+                </div>`;
+            
+            const removeButton = previewDiv.querySelector('.remove-file');
+            removeButton.addEventListener('click', function() {
+                fileInput.value = '';
+                previewDiv.innerHTML = '';
+            });
+        });
+    });
+    
+    function validateForm() {
+        const commentContent = document.getElementById("comment_content").value.trim();
+        const mediaUpload = document.getElementById("media-upload").files.length;
+    
+        if (commentContent !== "" || mediaUpload > 0) {
+            return true; 
+        }
+    
+        alert("Yorum yazmalı veya medya yüklemelisiniz!");
+        return false; 
+    }
+    
+    let editor;
+
+    document.addEventListener('DOMContentLoaded', function () {
+        ClassicEditor
+            .create(document.querySelector('#editor'), {
+                'toolbar': [
+                    
+                    'bold', 'italic',
+                    '|',
+                    'bulletedList', 'numberedList',
+                    '|', 
+                    'link',
+                    '|',
+                    'undo', 'redo',
+                    '|',
+                ],
+            })
+            .then(newEditor => {
+                editor = newEditor;
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    });
+    
+
+    function showPostEditForm() {
+        document.getElementById('edit-post-form').style.display = 'block';
+        if (editor) {
+            editor.setData(`{{ post.content|safe|escapejs }}`);
+        }
+    }
+
+    function hidePostEditForm() {
+        document.getElementById('edit-post-form').style.display = 'none';
+    }
+
+    function saveContent() {
+        const content = editor.getData();
+        document.getElementById('edited-content').value = content;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const editFileInput = document.getElementById('edit-media-upload');
+        const editPreviewDiv = document.getElementById('edit-media-preview');
+        
+        editFileInput.addEventListener('change', function(e) {
+            const file = this.files[0];
+            if (!file) return;
+            
+            if (file.size > 5 * 1024 * 1024) {
+                alert('Dosya boyutu 5MB\'dan küçük olmalıdır');
+                this.value = '';
+                editPreviewDiv.innerHTML = '';
+                return;
+            }
+            
+            editPreviewDiv.innerHTML = `
+                <div class="file-info">
+                    <i class="fas fa-image"></i>
+                    <span class="file-name">${file.name}</span>
+                    <button type="button" class="remove-file">×</button>
+                </div>`;
+            
+            const removeButton = editPreviewDiv.querySelector('.remove-file');
+            removeButton.addEventListener('click', function() {
+                editFileInput.value = '';
+                editPreviewDiv.innerHTML = '';
+            });
+        });
+    });
+    
+    function removeExistingMedia() {
+        document.getElementById('remove-media').value = 'true';
+        document.getElementById('edit-media-preview').innerHTML = '';
+    }
+</script>
+
+<div class="post-details-topic">
+    <h2 class="post-details-topic-header">{{ post.title }}</h2>
+    <div class="post-details-post-header">
+        <div class="post-author-section">
+            <h2>
+                Yazar:
+                <a href="/accounts/profile/{{ post.author.username }}">
+                    <u style="color:hsla(79, 100.00%, 50.00%, 0.80)"><strong style="color:hsla(79, 100.00%, 50.00%, 0.80)">{{ post.author }}</strong></u>
+                </a>
+            </h2>
+            
+            {% if post.author == request.user or request.user.is_staff %}
+                <div class="post-actions">
+                    <button class="edit-post-btn" onclick="showPostEditForm()">Gönderiyi Düzenle</button>
+                    <form method="post" class="delete-post-form">
+                        {% csrf_token %}
+                        <button type="submit" name="delete_post" class="delete-post-btn" onclick="return confirm('Bu gönderiyi silmek istediğinizden emin misiniz?')">Gönderiyi Sil</button>
+                    </form>
+                </div>
+        
+                <form method="post" id="edit-post-form" class="edit-form" style="display: none;" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div id="editor"></div>
+                    <input type="hidden" name="edited_post_content" id="edited-content">
+                    
+                    <div class="media-upload">
+                        <input type="file" name="edited_media" id="edit-media-upload" accept="image/*" style="display: none;">
+                        <label for="edit-media-upload" class="media-upload-btn">
+                            <i class="fas fa-image"></i> Resim/Gif Değiştir
+                        </label>
+                        <div id="edit-media-preview">
+                            {% if post.media_data %}
+                                <div class="file-info">
+                                    <i class="fas fa-image"></i>
+                                    <span class="file-name">Mevcut medya</span>
+                                    <button type="button" class="remove-file" onclick="removeExistingMedia()">×</button>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <input type="hidden" name="remove_media" id="remove-media" value="false">
+                    
+                    <div class="form-buttons">
+                        <button type="submit" name="edit_post" class="submit-post-btn" onclick="saveContent()">Kaydet</button>
+                        <button type="button" onclick="hidePostEditForm()" class="cancel-btn">İptal</button>
+                    </div>
+                </form>
+            {% endif %}
+        </div>
+        <div class="post-date-section">
+            <h2><strong>Oluşturulma Tarihi:</strong> {{ post.created_at }}</h2>
+        </div>
+    </div>
+    
+    
+    <hr>
+    <section class="post-details-content">
+        {{ post.content|safe }}
+        
+        {% if post.media_data %}
+            <div class="post-media">
+                <img src="data:{{ post.media_type }};base64,{{ post.media_data }}" 
+                     alt="Post media" 
+                     class="post-media-image">
+            </div>
+        {% endif %}
+    </section>
+    
+    <br><hr>
+
+    <div class="like-section">
+        <form method="post" style="display: inline; position: relative;">
+            {% csrf_token %}
+            <button type="submit" name="like" class="like-btn {% if user_likes %}hahad{% endif %}">
+                <span class="like-count">{{ likes_count }}</span>
+                <span class="like-emoji">👍</span>
+            </button>
+            
+            <div class="tooltip">
+                {% if post.likes.all %}
+                    <strong>Like</strong>
+                    <div class="tooltip-users">
+                        {% for like in post.likes.all %}
+                            <span class="tooltip-user">{{ like.user.username }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+    
+    <div class="dislike-section">
+        <form method="post" style="display: inline; position: relative;">
+            {% csrf_token %}
+            <button type="submit" name="dislike" class="dislike-btn {% if user_dislikes %}disliked{% endif %}">
+                <span class="dislike-count">{{ dislikes_count }}</span>
+                <span class="dislike-emoji">👎</span>
+            </button>
+            
+            <div class="tooltip">
+                {% if post.dislikes.all %}
+                    <strong>Beğenmedim</strong>
+                    <div class="tooltip-users">
+                        {% for dislike in post.dislikes.all %}
+                            <span class="tooltip-user">{{ dislike.user.username }}</span>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+    
+      
+
+    
+    <h3>Yorumlar</h3>
+    {% if comments %}
+        {% for comment in comments %}
+            <div class="comment">
+                <div class="comment-header">
+                    <strong>{{ comment.author }}</strong> -
+                    <span>{{ comment.created_at }}</span>
+                </div>
+                <div class="comment-body">
+                    <p>
+                        {{ comment.content|safe|urlize }}
+                    </p>
+                    {% if comment.media_data %}
+                        <img src="data:{{ comment.media_type }};base64,{{ comment.media_data }}" 
+                            alt="Comment media" 
+                            style="max-width: 500px; max-height: 500px;">
+                    {% endif %}
+                    {% if request.user == comment.author or request.user.is_staff %}
+                        <div class="comment-actions">
+                            <button class="edit-comment-btn" onclick="showEditForm({{ comment.id }})">Düzenle</button>
+                            <form method="post" style="display: inline;">
+                                {% csrf_token %}
+                                <input type="hidden" name="comment_id" value="{{ comment.id }}">
+                                <button type="submit" name="delete_comment" class="delete-comment-btn" 
+                                        onclick="return confirm('Bu yorumu silmek istediğinizden emin misiniz?')">Sil</button>
+                            </form>
+                        </div>
+                        
+                        <form method="post" id="edit-form-{{ comment.id }}" class="edit-form" style="display: none;">
+                            {% csrf_token %}
+                            <input type="hidden" name="comment_id" value="{{ comment.id }}">
+                            <div class="django-ckeditor-widget">
+                                <textarea name="edited_content" class="custom-textarea">{{ comment.content|safe }}</textarea>
+                            </div>
+                            <button type="submit" name="edit_comment" class="submit-comment-btn">Kaydet</button>
+                            <button type="button" onclick="hideEditForm({{ comment.id }})" class="cancel-btn">İptal</button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <h4>Henüz yorum yapılmamış.</h4>
+    {% endif %}
+    
+
+    <!-- Yorum Formu -->
+    <form method="post" class="comment-form" enctype="multipart/form-data" onsubmit="return validateForm()">
+        {% csrf_token %}
+        <textarea name="comment_content" id="comment_content" class="custom-textarea" placeholder="Yorumunuzu yazın..."></textarea>
+        
+        <div class="media-upload">
+            <input type="file" name="media" id="media-upload" accept="image/*" style="display: none;">
+            <label for="media-upload" class="media-upload-btn">
+                <i class="fas fa-image"></i> Resim/Gif Ekle
+            </label>
+            <div id="media-preview"></div>
+        </div>        
+        
+        <button type="submit" name="comment" class="submit-comment-btn">Yorum Yap</button>
+    </form>
+
+</div>
+
+<style>
+
+    /* Like ve Dislike Bölümleri */
+    .like-section, .dislike-section {
+        display: inline-block;
+        position: relative;
+        margin-right: 20px;
+    }
+
+    .like-btn, .dislike-btn {
+        position: relative;
+        padding: 5px 8px;
+        font-size: 14px;
+        cursor: pointer;
+        background-color: #f0f0f0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        transition: background-color 0.3s, transform 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .like-btn:hover, .dislike-btn:hover {
+        background-color: #e0e0e0;
+        transform: scale(1.05);
+    }
+
+    .like-count, .dislike-count {
+        font-size: 14px;
+        color: #000;
+    }
+
+    .like-emoji, .dislike-emoji {
+        font-size: 18px; 
+    }
+
+    .tooltip {
+        display: none;
+        position: absolute;
+        background-color: #333;
+        color: white;
+        padding: 10px;
+        border-radius: 5px;
+        min-width: 150px;
+        z-index: 1000;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        margin-top: 5px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .tooltip::before {
+        content: '';
+        position: absolute;
+        top: -5px;
+        left: 50%;
+        transform: translateX(-50%);
+        border-width: 0 5px 5px 5px;
+        border-style: solid;
+        border-color: transparent transparent #333 transparent;
+    }
+
+    .tooltip-users {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        margin-top: 5px;
+    }
+
+    .tooltip-user {
+        font-size: 12px;
+        padding: 2px 5px;
+        background-color: #444;
+        border-radius: 3px;
+    }
+
+    .like-section:hover .tooltip,
+    .dislike-section:hover .tooltip {
+        display: block;
+    }
+
+
+    /* Yorumlar Kısmı */
+    .comment {
+        background-color: #232323;
+        border: 1px solid #af9595;
+        padding: 10px;
+        margin: 10px 0;
+        border-radius: 5px;
+    }
+
+    .comment-header {
+        font-weight: bold;
+        color: #aeff00;
+    }
+
+    .comment-body {
+        font-size: 14px;
+        margin-top: 5px;
+        color: #dddddd;
+    }
+
+    .comment-body a {
+        color: #008bff;
+        text-decoration: none;
+    }
+    .comment-body a:hover {
+        text-decoration: underline;
+    }
+
+    /* Yorum Formu */
+    .comment-form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .custom-textarea {
+        padding: 10px;
+        font-size: 14px;
+        resize: vertical;
+        border-radius: 5px;
+        border: 1px solid #af9595;
+        min-height: 100px;
+        background-color: #232323;
+        color: #fff;
+    }
+
+    .custom-textarea:focus {
+        outline: none;
+        border-color: #ff0000;
+    }
+
+    .submit-comment-btn {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #ff00008f;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        align-self: flex-end;
+    }
+
+    .submit-comment-btn:hover {
+        background-color: #ff000075;
+    }
+
+    .comment-actions {
+        margin-top: 10px;
+        display: flex;
+        gap: 10px;
+    }
+
+    .edit-comment-btn, .delete-comment-btn {
+        padding: 5px 10px;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        font-size: 12px;
+    }
+
+    .edit-comment-btn {
+        background-color: #4CAF50;
+        color: white;
+    }
+
+    .delete-comment-btn {
+        background-color: #f44336;
+        color: white;
+    }
+
+    .cancel-btn {
+        background-color: #808080;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .edit-form {
+        margin-top: 10px;
+    }
+
+    /* Genel */
+    .post-details-topic {
+        background-color: #121212;
+        padding: 2em;
+        border-radius: 8px;
+        margin: 2em auto;
+        width: 80%;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .post-details-topic-header h2 {
+        font-size: 2em;
+        margin-bottom: 0.5em;
+        color: #fff;
+    }  
+
+    .post-details-post-header p {
+        margin: 0;
+    }
+
+    .post-details-post-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 1em;
+        font-size: 0.9em;
+        color: #696969;
+    }
+
+    .post-details-post-header strong {
+        color: #e0e0e0;
+    }
+
+    .post-details-content {
+        font-size: 1.2em;
+        line-height: 1.6;
+        margin-bottom: 1em;
+    }
+
+
+    /* delete button */
+
+    .delete-post-btn {
+        padding: 5px 10px;
+        font-size: 14px;
+        background-color: #f44336;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+    
+    .delete-post-btn:hover {
+        background-color: #d32f2f;
+    }
+    
+    /* Media Upload */
+    .media-upload {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    }
+
+    .media-upload-btn {
+    padding: 8px 15px;
+    background-color: #444;
+    color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background-color 0.3s, transform 0.3s;
+    }
+
+    .media-upload-btn:hover {
+    background-color: #555;
+    transform: scale(1.05);
+    }
+
+    .file-info {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background-color: #333;
+        padding: 6px 12px;
+        border-radius: 4px;
+        margin-left: 10px;
+    }
+    
+    .file-name {
+        color: #fff;
+        font-size: 14px;
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+    
+    .remove-file {
+        background: none;
+        border: none;
+        color: #ff4444;
+        font-size: 18px;
+        cursor: pointer;
+        padding: 0 4px;
+    }
+    
+    .remove-file:hover {
+        color: #ff0000;
+    }
+
+    /* Kullanicilarin post paylasirken girdigi medya */
+
+    .post-media {
+        margin-top: 20px;
+        text-align: left;
+    }
+    
+    .post-media-image {
+        max-width: 500px;
+        max-height: 500px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Edit post */
+
+    .post-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 10px;
+    }
+    
+    .edit-post-btn {
+        padding: 5px 10px;
+        font-size: 14px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+    }
+    
+    .edit-post-btn:hover {
+        background-color: #45a049;
+    }
+    
+    .submit-post-btn {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #4CAF50;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-right: 10px;
+    }
+    
+    .submit-post-btn:hover {
+        background-color: #45a049;
+    }
+    
+    .post-author-section .edit-form {
+        margin-top: 15px;
+        background-color: #232323;
+        padding: 15px;
+        border-radius: 5px;
+        border: 1px solid #af9595;
+    }
+    
+    .delete-post-form {
+        display: inline;
+    }
+
+    
+    /* CKEditor */
+    .ck.ck-editor {
+        width: 100% !important;
+        max-width: 100%;
+        margin-bottom: 20px;
+        min-width: 1000px !important;
+    }
+
+    .ck.ck-editor__main > .ck-editor__editable {
+        min-height: 500px !important; /
+        max-height: 800px !important; 
+        min-width: 1000px !important;
+        padding: 2em !important; 
+        font-size: 16px !important; 
+        background:rgb(41, 41, 41);
+    }
+
+    .ck.ck-toolbar {
+        padding: 10px !important; 
+        font-size: 15px !important; 
+        background:rgb(193, 193, 193);
+    }
+
+    .ck.ck-toolbar .ck-button {
+        padding: 8px 12px !important; 
+        margin: 2px !important; 
+        background:rgb(166, 166, 166);
+    }
+
+    .edit-form {
+        margin: 20px 0;
+        padding: 20px;
+        width: 100%;
+        margin: 0 auto; 
+        weight: 100%;
+    }
+    
+    .form-buttons {
+        margin-top: 15px;
+        display: flex;
+        gap: 10px;
+    }
+    
+    .ck-content {
+        min-height: 300px;
+        background: #fff;
+        min-weight: 500px;
+        color: white;
+    }
+
+    .edit-media-preview img {
+        max-width: 200px;
+        max-height: 200px;
+        margin-top: 10px;
+    }
+    
+    #edit-media-preview .file-info {
+        margin-top: 10px;
+    }
+</style>
+{% endblock %}

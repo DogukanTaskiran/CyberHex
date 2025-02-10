@@ -1,0 +1,107 @@
+{% extends 'layout.html' %} {% load static %} {% block content %}
+<div class="login-container">
+  <form method="post" class="login-form">
+    {% csrf_token %} {{ form.as_p }}
+    <button type="submit" class="login-button">Giriş Yap</button>
+  </form>
+</div>
+<style>
+  .login-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 4em 2em;
+  }
+  
+  .login-form {
+    background-color:rgb(20, 20, 20);
+    padding: 2.5em;
+    border-radius: 15px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 450px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5em;
+  }
+  
+  .form-group {
+    margin-bottom: 1.2em;
+  }
+  
+  .login-form label {
+    color: #f0f0f0;
+    font-weight: 500;
+    font-size: 1rem;
+    margin-bottom: 0.6em;
+    display: block;
+  }
+  
+  .login-form input {
+    width: 100%;
+    background-color: #2a2a2a;
+    color: #ffffff;
+    border: 1px solid #3a3a3a;
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+  }
+  
+  .login-form input:focus {
+    outline: none;
+    border-color: #cc1111;
+    box-shadow: 0 0 0 2px rgba(204, 17, 17, 0.2);
+    background-color: #303030;
+  }
+  
+  .login-form input::placeholder {
+    color: #888;
+    font-style: italic;
+  }
+  
+  .login-button {
+    background-color: #cc1111;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    padding: 1em 2em;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1em;
+    width: 100%;
+  }
+  
+  .login-button:hover {
+    background-color: #e61414;
+    transform: translateY(-1px);
+  }
+  
+  .login-button:active {
+    background-color: #b30f0f;
+    transform: translateY(1px);
+  }
+  
+  .error-message {
+    color: #ff4444;
+    font-size: 0.9rem;
+    margin-top: 0.4em;
+  }
+  
+  @media (max-width: 480px) {
+    .login-form {
+      padding: 1.5em;
+    }
+    
+    .login-button {
+      padding: 0.8em 1.5em;
+      font-size: 1rem;
+    }
+  }
+</style>
+{% endblock %}
